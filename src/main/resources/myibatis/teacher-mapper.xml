@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oa.dao.ITeacherDao">
+	
+	<!-- 添加老师考勤 -->
+	<insert id="addTeacherSignIn" parameterType="TeacherSignIn">
+	    INSERT INTO TEACHER_SIGN_IN(
+	    COURSE_CODE,
+	    TEACHER,
+	    SIGN_DATE,
+	    COME_TIME,
+	    CLASS_ON,
+	    CLASS_OFF,
+	    LESSON,
+	    STATUS,
+	    REMARKS,
+	    CREATE_AT,
+	    OP)
+	    VALUES(#{courseCode},
+	    #{teacher},
+	    #{signDate},
+	    #{comeTime},
+	    #{classOn},
+	    #{classOff},
+	    #{lesson},
+	    #{status},
+	    #{remarks},
+	    now(),
+	    #{op})
+	</insert>
+	
+	<resultMap type="TeacherSignIn" id="TeacherSignInCountMap">
+	    <id column="ID" property="id"/>
+	    <result column="TEACHER" property="teacher"/>
+	    <result column="COURSE_CODE" property="courseCode"/>
+	    <result column="LESSON" property="lesson"/>
+	</resultMap>
+	<!-- 老师考勤统计查询 -->
+	<select id="selectTeacherSignInCount" parameterType="TeacherSignIn"  resultMap="TeacherSignInCountMap">
+         SELECT 
+         ID,
+         TEACHER,
+         COURSE_CODE,
+         SUM(LESSON) AS LESSON
+         FROM TEACHER_SIGN_IN    
+         WHERE 1=1 
+         <if test="teacher != null and teacher !='' ">
+             AND TEACHER=#{teacher}
+         </if>
+         <if test="startAt != null and endAt != null ">
+             AND <![CDATA[SIGN_DATE >=#{startAt} AND SIGN_DATE<=#{endAt}]]> 
+         </if>
+         GROUP BY TEACHER,COURSE_CODE
+	</select>
+	
+	<resultMap type="TeacherSignIn" id="TeacherSignInMap">
+	    <id column="ID" property="id"/>
+	    <result column="TEACHER" property="teacher"/>
+	    <result column="COURSE_CODE" property="courseCode"/>
+	    <result column="SIGN_DATE" property="signDate"/>
+	    <result column="COME_TIME" property="comeTime"/>
+	    <result column="CLASS_ON" property="classOn"/>
+	    <result column="CLASS_OFF" property="classOff"/>
+	    <result column="STATUS" property="status"/>
+	    <result column="REMARKS" property="remarks"/>
+	    <result column="PEOPLE_NUM" property="peopleNum"/>
+	</resultMap>
+	<!-- 老师考勤查询 -->
+	<select id="selectTeacherSignIn" parameterType="TeacherSignIn" resultMap="TeacherSignInMap">
+         SELECT 
+         T.ID,
+         T.TEACHER,
+         T.COURSE_CODE,
+         T.SIGN_DATE,
+         T.COME_TIME,
+         T.CLASS_ON,
+         T.CLASS_OFF,
+         T.STATUS,
+         T.REMARKS,
+         (SELECT COALESCE(COUNT(SSI.ID),0) FROM STUDENT_SIGN_IN SSI,TEACHER_SIGN_IN TSI WHERE SSI.COURSE_CODE=TSI.COURSE_CODE AND SSI.SIGN_DATE=TSI.SIGN_DATE AND SSI.STATUS='1'   
+         <if test="courseCode != null and courseCode !='' ">
+         AND SSI.COURSE_CODE=#{courseCode} 
+         </if>
+         <if test="teacher != null and teacher !='' ">
+         AND TSI.TEACHER=#{teacher}
+         </if>
+        <!--  <if test="startAt != null and endAt != null">
+             AND <![CDATA[TSI.SIGN_DATE >=#{startAt} AND TSI.SIGN_DATE<=#{endAt}]]> 
+         </if> -->
+         <if test="signDate != null">
+             AND <![CDATA[TSI.SIGN_DATE =#{signDate}]]> 
+         </if>
+         AND TSI.TEACHER=T.TEACHER 
+         AND TSI.SIGN_DATE=T.SIGN_DATE 
+         AND TSI.COURSE_CODE=T.COURSE_CODE
+         ) AS PEOPLE_NUM 
+         FROM TEACHER_SIGN_IN  T
+         WHERE 1=1 
+          <if test="courseCode != null and courseCode !='' ">
+             AND T.COURSE_CODE=#{courseCode}
+         </if>
+         <if test="teacher != null and teacher !='' ">
+             AND T.TEACHER=#{teacher}
+         </if>
+         <if test="startAt != null and endAt != null">
+             AND <![CDATA[T.SIGN_DATE >=#{startAt} AND T.SIGN_DATE<=#{endAt}]]> 
+         </if>
+         ORDER BY T.SIGN_DATE DESC
+	</select>
+	
+	<!-- 老师考勤查询 - 总数 -->
+	<select id="teacherSignInCount" parameterType="TeacherSignIn" resultType="int">
+         SELECT 
+         COUNT(ID) 
+         FROM TEACHER_SIGN_IN    
+         WHERE 1=1 
+          <if test="courseCode != null and courseCode !='' ">
+             AND COURSE_CODE=#{courseCode}
+         </if>
+         <if test="teacher != null and teacher !='' ">
+             AND TEACHER=#{teacher}
+         </if>
+         <if test="startAt != null and endAt != null">
+             AND <![CDATA[SIGN_DATE >=#{startAt} AND SIGN_DATE<=#{endAt}]]> 
+         </if>
+	</select>
+	
+	<resultMap type="TeacherSignIn" id="HadTeacherSignInMap">
+	    <id column="ID" property="id"/>
+	    <result column="TEACHER" property="teacher"/>
+	    <result column="COURSE_CODE" property="courseCode"/>
+	    <result column="SIGN_DATE" property="signDate"/>
+	    <result column="STATUS" property="status"/>
+	</resultMap>
+	<!-- 判断当天是否已添加该考勤 -->
+	<select id="hadTeacherSignIn" parameterType="TeacherSignIn" resultMap="HadTeacherSignInMap">
+		SELECT 
+         T.ID,
+         T.TEACHER,
+         T.COURSE_CODE,
+         T.SIGN_DATE,
+         T.STATUS
+         FROM TEACHER_SIGN_IN T
+         WHERE T.COURSE_CODE = #{courseCode} 
+         AND T.TEACHER = #{teacher}  AND <![CDATA[T.SIGN_DATE =#{signDate}]]> 
+	</select>
+	
+	<!-- 老师考勤修改(只有管理员有权限) -->
+	<update id="updateTeacherSignIn" parameterType="TeacherSignIn" >
+	    UPDATE TEACHER_SIGN_IN 
+	    SET COURSE_CODE = #{courseCode},
+	    TEACHER = #{teacher},
+         SIGN_DATE = #{signDate},
+         COME_TIME = #{comeTime},
+         CLASS_ON = #{classOn},
+         CLASS_OFF = #{classOff},
+         STATUS = #{status},
+         REMARKS = #{remarks},
+         UPDATE_AT= now()  
+         WHERE ID=#{id}
+	</update>
+	
+</mapper> 

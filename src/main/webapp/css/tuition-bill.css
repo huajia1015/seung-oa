@@ -1,0 +1,25 @@
+.table_1 
+{ 
+border-collapse: collapse; 
+border: none; 
+width: 95%;
+bgcolor:#d2e7f0;
+} 
+.table_1 td 
+{ 
+border: solid #669 1px; 
+}
+
+.table_2 
+{ 
+border-collapse: collapse; 
+border: none; 
+width: 95%;
+height:420px;
+bgcolor:#d2e7f0;
+margin-left:5%;
+} 
+.table_2 td 
+{ 
+border: solid #669 1px; 
+}

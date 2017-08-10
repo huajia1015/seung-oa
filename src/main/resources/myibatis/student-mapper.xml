@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oa.dao.IStudentDao">
+	<resultMap type="StudentCourse" id="StudentCourseMap">
+	    <id column="ID" property="id"/>
+	    <result column="STUDENT_ID" property="studentId"/>
+	    <result column="STUDENT_NAME" property="studentName"/>
+	    <result column="COURSE_ID" property="courseId"/>
+	    <result column="COURSE_CODE" property="courseCode"/>
+	    <result column="START_AT" property="startAt"/>
+	    <result column="SCORE" property="score"/>
+	</resultMap>
+	<!-- 学生课程管理查询 -->
+	<select id="selectStudentCourse" parameterType="StudentCourse" resultMap="StudentCourseMap"  >
+         SELECT 
+         ID,
+         STUDENT_ID,
+         STUDENT_NAME,
+         COURSE_ID,
+         COURSE_CODE,
+         START_AT,
+         SCORE 
+         FROM STUDENT_COURSE    
+         WHERE STATUS = '0' 
+         <if test="courseCode != null and courseCode != '' and courseCode !='ALL' ">
+             AND COURSE_CODE=#{courseCode} 
+         </if>
+         <if test="studentName != null and studentName != '' ">
+             AND STUDENT_NAME=#{studentName} 
+         </if>
+         ORDER BY CREATE_AT DESC LIMIT #{start},#{end}
+	</select>
+	
+	<!-- 学生课程管理查询 - 总数 -->
+	<select id="selectStudentCourseCount" parameterType="StudentCourse" resultType="int">
+         SELECT COUNT(ID) 
+         FROM STUDENT_COURSE    
+         WHERE STATUS = '0' 
+         <if test="courseCode != null and courseCode != '' and courseCode !='ALL' ">
+             AND COURSE_CODE=#{courseCode} 
+         </if>
+         <if test="studentName != null and studentName != '' ">
+             AND STUDENT_NAME=#{studentName} 
+         </if>
+	</select>
+	
+	<!-- 查该学生所有课程 -->
+	<select id="selectStudentCourseByName" parameterType="java.lang.String" resultMap="StudentCourseMap"  >
+         SELECT 
+         ID,
+         STUDENT_ID,
+         STUDENT_NAME,
+         COURSE_ID,
+         COURSE_CODE,
+         START_AT,
+         SCORE 
+         FROM STUDENT_COURSE    
+         WHERE STATUS = '0' 
+         AND STUDENT_NAME=#{studentName} 
+	</select>
+	
+	<!-- 根据id查询学生课程 -->
+	<select id="selectStudentCourseById" parameterType="java.lang.Long" resultMap="StudentCourseMap"  >
+         SELECT 
+         ID,
+         STUDENT_ID,
+         STUDENT_NAME,
+         COURSE_ID,
+         COURSE_CODE,
+         START_AT,
+         SCORE 
+         FROM STUDENT_COURSE    
+         WHERE ID=#{id}
+	</select>
+	
+	<!-- 删除学生课程 -->
+	<update id="delStudentCourse" parameterType="StudentCourse">
+	    UPDATE STUDENT_COURSE 
+	    SET STATUS='1' 
+	    WHERE ID=#{id}
+	</update>
+	
+	<!-- 为学生添加课程 -->
+	<insert id="addStudentCourse" parameterType="StudentCourse">
+	    INSERT INTO STUDENT_COURSE(STUDENT_ID,STUDENT_NAME,COURSE_ID,COURSE_CODE,START_AT,SCORE,CREATE_AT)
+	    VALUES(#{studentId},
+	    #{studentName},
+	    #{courseId},
+	    #{courseCode},
+	    #{startAt},
+	    #{score},
+	    now())
+	</insert>
+	
+	<!-- 修改学生课程 -->
+	<update id="updateStudentCourse" parameterType="StudentCourse">
+	    UPDATE STUDENT_COURSE 
+	    SET 
+	    STUDENT_ID=#{studentId},
+	    STUDENT_NAME=#{studentName},
+	    COURSE_ID=#{courseId},
+	    COURSE_CODE=#{courseCode},
+	    START_AT=#{startAt},
+	    SCORE=#{score} 
+	    WHERE ID=#{id}
+	</update>
+	
+	<resultMap type="Student" id="StudentMap">
+	    <id column="ID" property="id"/>
+	    <result column="STUDENT_NAME" property="studentName"/>
+	    <result column="GRADE" property="grade"/>
+	    <result column="EN_NAME" property="enName"/>
+	    <result column="SCHOOL" property="school"/>
+	    <result column="ADDRESS" property="address"/>
+	    <result column="CONTACT_INFO" property="contactInfo"/>
+	    <result column="CONTACT_INFO2" property="contactInfo2"/>
+	    <result column="QQ" property="qq"/>
+	</resultMap>
+	<!-- 查询学生 -->
+	<select id="selectStudent" parameterType="Student" resultMap="StudentMap"  >
+         SELECT 
+         ID,
+         STUDENT_NAME,
+         GRADE,
+         EN_NAME,
+         SCHOOL,
+         ADDRESS,
+         CONTACT_INFO,
+         CONTACT_INFO2,
+         QQ
+         FROM STUDENT    
+         WHERE STATUS='0'  ORDER BY CREATE_AT DESC
+	</select>
+	
+	<resultMap type="Student" id="AjaxStudentMap">
+	    <id column="ID" property="id"/>
+	    <result column="STUDENT_NAME" property="studentName"/>
+	</resultMap>
+	<!-- 查询学生 - ajax -->
+	<select id="selectStudentAjax" parameterType="java.lang.String" resultMap="AjaxStudentMap"  >
+         SELECT 
+         ID,
+         STUDENT_NAME
+         FROM STUDENT    
+         WHERE STATUS='0'  AND STUDENT_NAME LIKE #{studentName}"%"
+	</select>
+	
+	<!-- 查询某个学生 -->
+	<select id="selectStudentById" parameterType="java.lang.Long" resultMap="StudentMap"  >
+         SELECT 
+         ID,
+         STUDENT_NAME,
+         GRADE,
+         EN_NAME,
+         SCHOOL,
+         ADDRESS,
+         CONTACT_INFO,
+         CONTACT_INFO2,
+         QQ
+         FROM STUDENT    
+         WHERE ID=#{id}
+	</select>
+	
+	<!-- 根据名字查询学生 -->
+	<select id="selectStudentByName" parameterType="Student" resultMap="StudentMap"  >
+         SELECT 
+         ID,
+         STUDENT_NAME,
+         GRADE,
+         EN_NAME,
+         SCHOOL,
+         ADDRESS,
+         CONTACT_INFO,
+         CONTACT_INFO2,
+         QQ
+         FROM STUDENT    
+         WHERE STATUS = '0' 
+         <if test="studentName != null and studentName != ''">
+             AND STUDENT_NAME LIKE #{studentName} 
+         </if>
+         <if test="grade != null and grade != ''">
+             AND GRADE LIKE #{grade} 
+         </if>
+	</select>
+	
+	<!-- 添加学生 -->
+	<insert id="addStudent" parameterType="Student">
+	    INSERT INTO STUDENT(STUDENT_NAME,EN_NAME,SCHOOL,ADDRESS,CONTACT_INFO,CONTACT_INFO2,QQ,STATUS,CREATE_AT,GRADE)
+	    VALUES(#{studentName},
+	    #{enName},
+	    #{school},
+	    #{address},
+	    #{contactInfo},
+	    #{contactInfo2},
+	    #{qq},
+	    '0',
+	    now(),
+	    #{grade})
+	</insert>
+	
+	<!-- 删除学生 -->
+	<update id="delStudent" parameterType="Student">
+	    UPDATE STUDENT 
+	    SET STATUS=#{status},UPDATE_AT=now() 
+	    WHERE ID=#{id}
+	</update>
+	
+	<resultMap type="Course" id="CourseMap">
+	    <id column="ID" property="id"/>
+	    <result column="COURSE_CODE" property="courseCode"/>
+	    <result column="COURSE" property="course"/>
+	    <result column="TEACHER" property="teacher"/>
+	    <result column="TERM" property="term"/>
+	    <result column="SCHOOL_DATE" property="schoolDate"/>
+	    <result column="TIME" property="time"/>
+	</resultMap>
+	<!-- 查询课程 -->
+	<select id="selectCourse" parameterType="Course" resultMap="CourseMap">
+	    SELECT
+	    ID,
+	    COURSE_CODE,
+	    COURSE,
+	    TEACHER,
+	    TERM,
+	    SCHOOL_DATE,
+	    TIME 
+	    FROM COURSE 
+	    WHERE STATUS='0'  ORDER BY CREATE_AT DESC 
+	    <if test="hasPage == true">
+	    LIMIT #{start},#{end}
+	    </if>
+	</select>
+	
+	<!-- 查询课程 - 总数-->
+	<select id="selectCourseCount" parameterType="Course" resultType="int">
+          SELECT 
+	    COUNT(ID) 
+	    FROM COURSE 
+	    WHERE STATUS='0'
+	</select>
+	
+	<!-- 根据id查询课程 -->
+	<select id="selectCourseById" parameterType="java.lang.Long" resultMap="CourseMap">
+	    SELECT
+	    ID,
+	    COURSE_CODE,
+	    COURSE,
+	    TEACHER,
+	    TERM,
+	    SCHOOL_DATE,
+	    TIME 
+	    FROM COURSE
+	    WHERE STATUS='0' AND ID=#{id}
+	</select>
+	
+	<!-- 查询该课程是否存在 -->
+	<select id="hadCourse" parameterType="java.lang.String" resultMap="CourseMap">
+	    SELECT
+	    ID,
+	    COURSE_CODE,
+	    COURSE,
+	    TEACHER,
+	    TERM,
+	    SCHOOL_DATE,
+	    TIME 
+	    FROM COURSE 
+	    WHERE COURSE_CODE = #{courseCode}
+	</select>
+	
+	<resultMap type="Course" id="AjaxCourseMap">
+	    <id column="ID" property="id"/>
+	    <result column="COURSE_CODE" property="courseCode"/>
+	    <result column="COURSE" property="course"/>
+	 </resultMap>
+	<!-- 查询课程 - Ajax -->
+	<select id="selectAjaxCourse" parameterType="java.lang.String" resultMap="AjaxCourseMap">
+	    SELECT
+	    ID,
+	    COURSE_CODE,
+	    COURSE
+	    FROM COURSE 
+	    WHERE STATUS='0'  AND COURSE_CODE LIKE #{courseCode}"%"
+	</select>
+	
+	<!-- 添加课程 -->
+	<insert id="addCourse" parameterType="Course">
+	    INSERT INTO COURSE(COURSE_CODE,COURSE,TEACHER,TERM,SCHOOL_DATE,TIME,STATUS,CREATE_AT)
+	    VALUES(#{courseCode},
+	    #{course},
+	    #{teacher},
+	    #{term},
+	    #{schoolDate},
+	    #{time},
+	    '0',
+	    now())
+	</insert>
+	
+	<!-- 删除课程 -->
+	<update id="delCourse" parameterType="java.lang.Long">
+	    UPDATE COURSE 
+	    SET STATUS='1' 
+	    WHERE ID=#{id}
+	</update>
+	
+	<!--  修改课程 -->
+	<update id="updateCourse" parameterType="Course">
+	    UPDATE COURSE 
+	    SET COURSE_CODE=#{courseCode},
+	    COURSE=#{course},
+	    TEACHER=#{teacher},
+	    SCHOOL_DATE=#{schoolDate},
+	    TIME=#{time},
+	    TERM=#{term},
+	    UPDATE_AT=now() 
+	    WHERE ID=#{id}
+	</update>
+	
+	<!-- 学生签到/缺勤 -->
+	<insert id="insertStudentSignIn" parameterType="StudentSignIn">
+	    INSERT INTO STUDENT_SIGN_IN(STUDENT_ID,STUDENT_NAME,COURSE_CODE,SIGN_DATE,TIME,LESSON,STATUS,CREATE_AT,OP,REMARKS) 
+	    VALUES(#{studentId},
+	    #{studentName},
+	    #{courseCode},
+	    #{signDate},
+	    #{time},
+	    #{lesson},
+	    #{status},
+	    now(),
+	    #{op},
+	    #{remarks})
+	</insert>
+	
+	<!-- 学生签到/缺勤 - 批量 -->
+	<insert id="insertStudentSignInBatch" parameterType="java.util.List">
+	    INSERT INTO STUDENT_SIGN_IN(STUDENT_ID,STUDENT_NAME,COURSE_CODE,SIGN_DATE,TIME,LESSON,STATUS,CREATE_AT) 
+	    VALUES 
+	    <foreach collection="list" item="item" index="index" separator=",">
+	    (#{item.studentId},#{item.studentName},#{item.courseCode},#{item.signDate},#{item.time},#{item.lesson},#{item.status},now())
+	    </foreach>
+	</insert>
+	
+	<resultMap type="StudentSignIn" id="StudentSignInCountMap">
+	    <result column="STUDENT_NAME" property="studentName"/>
+	    <result column="COURSE_CODE" property="courseCode"/>
+	    <result column="LESSON" property="lesson"/>
+	</resultMap>
+	<!-- 学生签到统计查询 -->
+	<select id="selectStudentSignInCount" parameterType="StudentSignIn" resultMap="StudentSignInCountMap"  >
+         SELECT 
+         STUDENT_NAME,
+         COURSE_CODE,
+         SUM(LESSON) AS LESSON
+         FROM STUDENT_SIGN_IN    
+         WHERE STATUS = '1' 
+         <if test="courseCode != null and courseCode !='' ">
+             AND COURSE_CODE=#{courseCode} 
+         </if>
+         <if test="studentName != null and studentName != '' ">
+             AND STUDENT_NAME = #{studentName} 
+         </if>
+         <if test="startAt != null and endAt != null">
+             AND <![CDATA[SIGN_DATE >=#{startAt} AND SIGN_DATE<=#{endAt}]]>
+         </if>
+         GROUP BY STUDENT_NAME,COURSE_CODE
+	</select>
+	
+	<resultMap type="StudentSignIn" id="StudentSignInMap">
+	    <id column="ID" property="id"/>
+	    <result column="STUDENT_ID" property="studentId"/>
+	    <result column="STUDENT_NAME" property="studentName"/>
+	    <result column="COURSE_CODE" property="courseCode"/>
+	    <result column="SIGN_DATE" property="signDate"/>
+	    <result column="LESSON" property="lesson"/>
+	    <result column="STATUS" property="status"/>
+	    <result column="REMARKS" property="remarks"/>
+	</resultMap>
+	<!-- 学生签到查询 -->
+	<select id="selectStudentSignIn" parameterType="StudentSignIn" resultMap="StudentSignInMap"  >
+         SELECT 
+         ID,
+         STUDENT_ID,
+         STUDENT_NAME,
+         COURSE_CODE,
+         SIGN_DATE,
+         LESSON,
+         STATUS,
+         REMARKS
+         FROM STUDENT_SIGN_IN    
+         WHERE 1=1 
+         <if test="courseCode != null and courseCode !='' ">
+             AND COURSE_CODE=#{courseCode} 
+         </if>
+         <if test="studentName!=null and studentName !='' ">
+             AND STUDENT_NAME=#{studentName} 
+         </if>
+         <if test="status != null and status != '' ">
+             AND STATUS=#{status} 
+         </if>
+         <if test="startAt != null and endAt != null ">
+             AND <![CDATA[SIGN_DATE >=#{startAt} AND SIGN_DATE<=#{endAt}]]> 
+         </if>
+         <if test="signDate != null ">
+             AND <![CDATA[SIGN_DATE =#{signDate}]]> 
+         </if>
+         ORDER BY SIGN_DATE DESC LIMIT #{start},#{end}
+	</select>
+	
+	<!-- 学生签到查询 - 总数 -->
+	<select id="studentSignInCount" parameterType="StudentSignIn" resultType="int" >
+         SELECT 
+         COUNT(ID) 
+         FROM STUDENT_SIGN_IN 
+         WHERE 1=1 
+         <if test="courseCode != null and courseCode !='' ">
+             AND COURSE_CODE=#{courseCode} 
+         </if>
+         <if test="studentName!=null and studentName !='' ">
+             AND STUDENT_NAME=#{studentName} 
+         </if>
+         <if test="status != null and status != '' ">
+             AND STATUS=#{status} 
+         </if>
+         <if test="startAt != null and endAt != null ">
+             AND <![CDATA[SIGN_DATE >=#{startAt} AND SIGN_DATE<=#{endAt}]]> 
+         </if>
+          <if test="signDate != null ">
+             AND <![CDATA[SIGN_DATE =#{signDate}]]> 
+         </if>
+	</select>
+	
+	<!-- 判断该学生是否签到 -->
+	<select id="hadStudentSignIn" parameterType="StudentSignIn" resultMap="StudentSignInMap"  >
+         SELECT 
+         ID,
+         STUDENT_ID,
+         STUDENT_NAME,
+         COURSE_CODE,
+         SIGN_DATE,
+         LESSON,
+         STATUS,
+         REMARKS
+         FROM STUDENT_SIGN_IN     
+         WHERE 1=1  
+         <if test="courseCode != null and courseCode != '' ">
+             AND COURSE_CODE=#{courseCode} 
+         </if>
+         <if test="studentName != null and studentName != '' ">
+             AND STUDENT_NAME=#{studentName} 
+         </if>
+         <if test="signDate != null">
+             AND <![CDATA[SIGN_DATE =#{signDate}]]> 
+         </if>
+	</select>
+	
+	<resultMap type="StudentSignIn" id="StudentSignInInfoMap">
+	    <id column="ID" property="id"/>
+	    <result column="STUDENT_ID" property="studentId"/>
+	    <result column="STUDENT_NAME" property="studentName"/>
+	    <result column="COURSE" property="course"/>
+	    <result column="COURSE_CODE" property="courseCode"/>
+	    <result column="TIME" property="time"/>
+	</resultMap>
+	<!-- 加载当前日期学生签到信息 -->
+	<select id="selectStudentSignInInfo" parameterType="Course" resultMap="StudentSignInInfoMap"  >
+         SELECT 
+         SC.ID,
+         SC.STUDENT_ID,
+         SC.STUDENT_NAME,
+         C.COURSE,
+         C.COURSE_CODE,
+         C.TIME 
+         FROM COURSE C JOIN STUDENT_COURSE SC  ON(C.COURSE_CODE=SC.COURSE_CODE)
+         WHERE SC.STATUS='0' AND C.STATUS='0'
+         <if test="courseCode != null and courseCode != '' ">
+             AND C.COURSE_CODE=#{courseCode}  
+         </if>
+         <if test="id != null ">
+             AND SC.ID=#{id}
+         </if>
+	</select>
+	
+	<!-- 批量 - 加载当前日期学生签到信息 -->
+	<select id="selectStudentSignInInfoBatch" parameterType="Course" resultMap="StudentSignInInfoMap"  >
+         SELECT 
+         SC.ID,
+         SC.STUDENT_ID,
+         SC.STUDENT_NAME,
+         C.COURSE,
+         C.COURSE_CODE,
+         C.TIME 
+         FROM COURSE C JOIN STUDENT_COURSE SC  ON(C.COURSE_CODE=SC.COURSE_CODE)
+         WHERE 1=1 
+         <if test="courseCode != null and courseCode != '' ">
+             AND C.COURSE_CODE=#{courseCode}  
+         </if>
+         <if test="ids != null ">
+             AND SC.ID IN (
+             	<foreach collection="ids" item="id" index="index" separator=",">
+             	    #{id}
+             	</foreach>
+             )
+         </if>
+	</select>
+</mapper> 

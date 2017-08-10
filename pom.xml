@@ -1,0 +1,245 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.oa</groupId>
+  <artifactId>chen-oa</artifactId>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>chen-oa Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>4.5</version>
+		<scope>test</scope>
+    </dependency>
+    <!-- ! Log4j -->
+    <dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	<!-- ! Log4j  END-->
+    <!-- ! Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<version>${spring.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-asm</artifactId>
+			<version>${spring.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		 <dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!-- ! Spring END -->
+		<!-- MyBatis begin -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>${org.mybatis-spring-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>${org.mybatis-version}</version>
+		</dependency>
+		<!-- <dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-ehcache</artifactId>
+			<version>${org.mybatis-ehcache-version}</version>
+		</dependency> -->
+		
+		<!-- <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.1</version>
+		</dependency> -->
+		<!-- MyBatis END -->
+		<!-- dbcp -->
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>${commons-dbcp.version}</version>
+		</dependency>
+		<!-- dbcp END-->
+		<!-- MySql -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version>
+		</dependency>
+		<!-- MySql END -->
+		<!-- servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>${servlet.version}</version>
+		</dependency>
+		<!-- servlet END -->
+		<!-- jstl -->
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${jstl.version}</version>
+		</dependency>
+		<!-- jstl END-->
+		<!-- MD5 -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<!-- MD5 END-->
+		<!-- Json -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.1.15</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.4</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<!-- Json END -->
+  </dependencies>
+  <build>
+    <finalName>chen-oa</finalName>
+    <plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<version>1.4</version>
+				<configuration>
+					<complianceLevel>1.6</complianceLevel>
+					<encoding>UTF-8</encoding>
+					<sources>
+						<source>
+							<basedir>src/main/java/com</basedir>
+							<includes>
+								<include>oa/**/*.java</include>
+							</includes>
+						</source>
+					</sources>
+					<includes>
+						<include>oa/**/*.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+		</plugins>
+  </build>
+  <repositories>
+		<repository>
+			<id>alibaba-repository</id>
+			<url>http://code.alibabatech.com/mvn/releases/</url>
+		</repository>
+		<repository>
+			<id>maven-morphia</id>
+			<url>http://morphia.googlecode.com/svn/mavenrepo/</url>
+		</repository>
+	</repositories>
+	<properties>
+		<spring.version>3.1.0.RELEASE</spring.version>
+		<log4j.version>1.2.17</log4j.version>
+		<servlet.version>2.0</servlet.version>
+		<org.mybatis-version>3.2.0</org.mybatis-version>
+		<org.mybatis-spring-version>1.2.0</org.mybatis-spring-version>
+		<org.mybatis-ehcache-version>1.0.0</org.mybatis-ehcache-version>
+		<mysql.version>5.1.25</mysql.version>
+		<c3p0.version>0.9.1.2</c3p0.version>
+		<commons-dbcp.version>1.4</commons-dbcp.version>
+		<jstl.version>1.2</jstl.version>
+	</properties>
+</project>

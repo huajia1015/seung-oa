@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oa.dao.ITuitionBillDao">
+	<resultMap type="TuitionBill" id="TuitionBillMap">
+	    <id column="ID" property="id"/>
+	    <result column="STUDENT_ID" property="studentId"/>
+	    <result column="STUDENT_NAME" property="studentName"/>
+	    <result column="GRADE" property="grade"/>
+	    <result column="START_MONTH" property="startMonth"/>
+	    <result column="END_MONTH" property="endMonth"/>
+	    <result column="BOOK_FEE" property="bookFee"/>
+	    <result column="MATERIAL_FEE" property="materialFee"/>
+	    <result column="TOTAL_FEE" property="totalFee"/>
+	    <result column="TUITION_BILL_STATUS" property="tuitionBillStatus"/>
+	    <result column="OP" property="op"/>
+	    <result column="OP_FEE" property="opFee"/>
+	    <result column="FEE_TYPE" property="feeType"/>
+	    <result column="REMARKS" property="remarks"/>
+	    <result column="CREATE_AT" property="createAt"/>
+	</resultMap>
+	<!-- 查询学费单 -->
+	<select id="selectTuitionBills" parameterType="TuitionBill" resultMap="TuitionBillMap"  >
+         SELECT 
+         ID,
+         STUDENT_ID,
+         STUDENT_NAME,
+         GRADE,
+         START_MONTH,
+         END_MONTH,
+         BOOK_FEE,
+         MATERIAL_FEE,
+         TOTAL_FEE,
+         TUITION_BILL_STATUS,
+         OP,
+         OP_FEE,
+         FEE_TYPE,
+         REMARKS,
+         CREATE_AT
+         FROM TUITION_BILL    
+         WHERE 1=1  
+         <if test="studentName != null and studentName != ''">
+             AND STUDENT_NAME LIKE #{studentName}"%" 
+         </if>
+         <if test="grade != null and grade != ''">
+             AND GRADE LIKE #{grade}"%" 
+         </if>
+         <if test="tuitionBillStatus != null and tuitionBillStatus != '' ">
+             AND TUITION_BILL_STATUS=#{tuitionBillStatus} 
+         </if>
+         <if test="startMonth != null and startMonth != '' and endMonth != null and endMonth != ''">
+             AND START_MONTH BETWEEN #{startMonth} AND #{endMonth}
+         </if>
+         ORDER BY CREATE_AT DESC LIMIT #{start},#{end}
+	</select>
+	
+	<!-- 学费单 - 总数 -->
+	<select id="selectTuitionBillCount" parameterType="TuitionBill" resultType="int">
+         SELECT COUNT(ID) 
+         FROM TUITION_BILL    
+         WHERE 1=1  
+         <if test="studentName != null and studentName != ''">
+             AND STUDENT_NAME LIKE #{studentName}"%"
+         </if>
+         <if test="grade != null and grade != ''">
+             AND GRADE LIKE #{grade}"%" 
+         </if>
+         <if test="tuitionBillStatus != null and tuitionBillStatus != '' ">
+             AND TUITION_BILL_STATUS=#{tuitionBillStatus} 
+         </if>
+         <if test="startMonth != null and startMonth != '' and endMonth != null and endMonth != ''">
+             AND START_MONTH BETWEEN #{startMonth} AND #{endMonth}
+         </if>
+	</select>
+	
+	<!-- 根据id查询学费单详细 -->
+	<select id="selectTuitionBillById" parameterType="java.lang.Long" resultMap="TuitionBillMap">
+         SELECT 
+         ID,
+         STUDENT_ID,
+         STUDENT_NAME,
+         GRADE,
+         START_MONTH,
+         END_MONTH,
+         BOOK_FEE,
+         MATERIAL_FEE,
+         TOTAL_FEE,
+         TUITION_BILL_STATUS,
+         OP,
+         FEE_TYPE,
+         REMARKS,
+         CREATE_AT 
+         FROM TUITION_BILL    
+         WHERE ID=#{id}
+	</select>
+	
+	<!-- 查询学费单是否存在 -->
+	<select id="selectTuitionBillExist" parameterType="TuitionBill" resultMap="TuitionBillMap">
+         SELECT 
+         ID,
+         STUDENT_ID,
+         STUDENT_NAME,
+         GRADE,
+         START_MONTH,
+         END_MONTH,
+         BOOK_FEE,
+         MATERIAL_FEE,
+         TOTAL_FEE,
+         TUITION_BILL_STATUS,
+         OP,
+         FEE_TYPE,
+         REMARKS,
+         CREATE_AT 
+         FROM TUITION_BILL    
+         WHERE STUDENT_NAME=#{studentName} AND START_MONTH=#{startMonth} AND END_MONTH=#{endMonth}
+	</select>
+	
+	<resultMap type="TuitionBillDetail" id="TuitionBillDetailMap">
+	    <id column="ID" property="id"/>
+	    <result column="TUITION_BILL_ID" property="tuitionBillId"/>
+	    <result column="COURSE_CODE" property="courseCode"/>
+	    <result column="CLASS_DATE" property="classDate"/>
+	    <result column="TUITION_FEE" property="tuitionFee"/>
+	    <result column="OP" property="op"/>
+	    <result column="CREATE_AT" property="createAt"/>
+	</resultMap>
+	<!-- 根据id查询学费单详细 -->
+	<select id="selectTuitionBillDetailById" parameterType="java.lang.Long" resultMap="TuitionBillDetailMap">
+         SELECT 
+         ID,
+         TUITION_BILL_ID,
+         COURSE_CODE,
+         CLASS_DATE,
+         TUITION_FEE,
+         OP,
+         CREATE_AT 
+         FROM TUITION_BILL_DETAIL    
+         WHERE TUITION_BILL_ID=#{tuitionBillId}
+	</select>
+	
+	<!-- 修改学费单 -->
+	<update id="updateTuitionBill" parameterType="TuitionBill">
+		UPDATE TUITION_BILL 
+	    SET 
+	     STUDENT_ID=#{studentId},
+         STUDENT_NAME=#{studentName},
+         START_MONTH=#{startMonth},
+         END_MONTH=#{endMonth},
+         BOOK_FEE=#{bookFee},
+         MATERIAL_FEE=#{materialFee},
+         TOTAL_FEE=#{totalFee},
+         TUITION_BILL_STATUS=#{tuitionBillStatus},
+         OP=#{op},
+         OP_FEE=#{opFee},
+         FEE_TYPE=#{feeType},
+         REMARKS=#{remarks},
+         UPDATE_AT=now()
+	    WHERE ID=#{id}
+	</update>
+	
+	<!-- 修改学费单明细 -->
+	<update id="updateTuitionBillDetail" parameterType="TuitionBillDetail">
+	    UPDATE TUITION_BILL_DETAIL 
+	    SET 
+         COURSE_CODE=#{courseCode},
+         CLASS_DATE=#{classDate},
+         TUITION_FEE=#{tuitionFee},
+         OP=#{op},
+         UPDATE_AT=now()
+	    WHERE ID=#{id}
+	</update>
+	
+	<!-- 添加学费单-->
+	<insert id="addTuitionBill" parameterType="TuitionBill" useGeneratedKeys="true" keyProperty="id">
+	    INSERT INTO TUITION_BILL(
+         STUDENT_ID,
+         STUDENT_NAME,
+         GRADE,
+         START_MONTH,
+         END_MONTH,
+         BOOK_FEE,
+         MATERIAL_FEE,
+         TOTAL_FEE,
+         TUITION_BILL_STATUS,
+         FEE_TYPE,
+         OP,
+         REMARKS,
+         CREATE_AT)
+	    VALUES(#{studentId},
+	    #{studentName},
+	    #{grade},
+	    #{startMonth},
+	    #{endMonth},
+	    #{bookFee},
+	    #{materialFee},
+	    #{totalFee},
+	    '0',
+	    '0',
+	    #{op},
+	    #{remarks},
+	    now())
+	</insert>
+	
+	<!-- 添加学费单详细-->
+	<insert id="addTuitionBillDetail" parameterType="TuitionBillDetail">
+	    INSERT INTO TUITION_BILL_DETAIL(
+        TUITION_BILL_ID,
+         COURSE_CODE,
+         CLASS_DATE,
+         TUITION_FEE,
+         OP,
+         CREATE_AT)
+	    VALUES(#{tuitionBillId},
+	    #{courseCode},
+	    #{classDate},
+	    #{tuitionFee},
+	    #{op},
+	    now())
+	</insert>
+</mapper> 

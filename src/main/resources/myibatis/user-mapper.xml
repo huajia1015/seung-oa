@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oa.dao.IUserDao">
+	
+	<!-- 登录 -->
+	<select id="login" parameterType="User" resultType="User"  >
+         SELECT 
+         ID id,
+         USER_NAME userName,
+         PASSWORD password,
+         STATUS status
+         FROM USER    
+         WHERE STATUS= '0' AND USER_NAME=#{userName} AND PASSWORD=#{password}
+	</select>
+	
+	<!-- 更新登录状态 -->
+	<update id="updateLogin" parameterType="User">
+	    UPDATE USER 
+	     SET IP = #{ip},
+	     IS_LOGIN = #{isLogin},
+	     LOGIN_DATE = now() 
+	     WHERE ID=#{id}
+	</update>
+	
+	<!-- 登出 -->
+	<update id="logout" parameterType="User">
+	    UPDATE USER 
+	     SET IS_LOGIN = #{isLogin},
+	     LOGOUT_DATE = now() 
+	     WHERE ID=#{id}
+	</update>
+	
+	<resultMap type="User" id="selectUserMap">
+	    <id column="ID" property="id"/>
+	    <result column="USER_NAME" property="userName"/>
+	</resultMap>
+	<!-- 根据权限级别查询用户 -->
+	<select id="selectUser" parameterType="java.lang.String" resultMap="selectUserMap"  >
+         SELECT 
+         ID,
+         USER_NAME 
+         FROM USER    
+         WHERE STATUS='0' AND AUTHORITY=#{authority}
+	</select>
+	
+	<!-- 修改密码 -->
+	<update id="modifyPwd" parameterType="User">
+	    UPDATE USER 
+	    SET 
+	    PASSWORD=#{password},
+	    UPDATE_AT=now() 
+	    WHERE ID=#{id}
+	</update>
+	
+	<!-- 添加用户 -->
+	<insert id="insertUser" parameterType="User">
+	INSERT INTO USER(USER_NAME,PASSWORD,STATUS,AUTHORITY,CREATE_AT) 
+	VALUES(#{userName},
+	    #{password},
+	    '0',
+	    #{authority},
+	    now())
+	</insert>
+</mapper> 

@@ -1,0 +1,166 @@
+数据库：MySql
+
+表结构：
+USER 用户表(老师) :
+CREATE TABLE USER(
+	ID  int auto_increment primary key,
+	USER_NAME varchar(255) not null,
+	PASSWORD varchar(255) not null,
+	STATUS varchar(2) default '0',
+	AUTHORITY varchar(2) not null,
+	IP varchar(50),
+	IS_LOGIN varchar(2) default '0',
+	LOGIN_DATE datetime,
+	LOGOUT_DATE datetime,
+	CREATE_AT datetime,
+	UPDATE_AT datetime
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--插入用户
+insert into user(USER_NAME,PASSWORD,AUTHORITY,CREATE_AT)
+values('test','e10adc3949ba59abbe56e057f20f883e','1',now())
+--统计上课人数
+SELECT SUM(SSI.ID) FROM STUDENT_SIGN_IN SSI,COURSE C
+WHERE SSI.COURSE=C.COURSE AND SSI.COURSE=#{course} AND C.TEACHER=#{teacher}
+
+SELECT ID, TEACHER, COURSE, SUM(LESSON) AS LESSON FROM TEACHER_SIGN_IN WHERE 1=1 AND TEACHER='teacher1'  GROUP BY TEACHER,COURSE
+	
+STUDENT 学生表:
+CREATE TABLE STUDENT(
+	ID  int auto_increment primary key,
+	STUDENT_NAME varchar(255) not null,
+	EN_NAME varchar(255),
+	SCHOOL varchar(255) not null,
+	ADDRESS varchar(255),
+	CONTACT_INFO varchar(255)  not null,
+	CONTACT_INFO2 varchar(255),
+	QQ varchar(20),
+	STATUS varchar(2) default '0',
+	CREATE_AT datetime,
+	UPDATE_AT datetime
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+COURSE 课程表:
+CREATE TABLE COURSE(
+	ID  int auto_increment primary key,
+	COURSE_CODE varchar(255) not null,
+	COURSE varchar(255) not null,
+	TEACHER varchar(255) not null,
+	TERM varchar(255) not null,
+	SCHOOL_DATE  varchar(255) not null,
+	TIME varchar(255) not null,
+	STATUS varchar(2) default '0',
+	CREATE_AT datetime,
+	UPDATE_AT datetime
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+STUDENT_COURSE 学生课程关系表:
+CREATE TABLE STUDENT_COURSE(
+	ID  int auto_increment primary key,
+	STUDENT_ID int,
+	STUDENT_NAME varchar(255) not null,
+	COURSE_ID int,
+	COURSE_CODE varchar(255) not null,
+	SCORE  varchar(255),
+	START_AT datetime,
+	STATUS varchar(2) default '0',
+	CREATE_AT datetime,
+	UPDATE_AT datetime
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+STUDENT_SIGN_IN 学生签到表:
+CREATE TABLE STUDENT_SIGN_IN(
+	ID  int auto_increment primary key,
+	STUDENT_ID int,
+	STUDENT_NAME varchar(255) not null,
+	COURSE_CODE varchar(255) not null,
+	SIGN_DATE datetime,
+	TIME varchar(255) not null,
+	LESSON double,
+	STATUS varchar(2) default '0',
+	OP varchar(255),
+	CREATE_AT datetime,
+	UPDATE_AT datetime
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+TEACHER_SIGN_IN 老师考勤表:
+CREATE TABLE TEACHER_SIGN_IN(
+	ID  int auto_increment primary key,
+	COURSE_CODE varchar(255) not null,
+	TEACHER varchar(255) not null,
+	STATUS varchar(2) not null,
+	SIGN_DATE datetime,
+	COME_TIME varchar(255) not null,
+	CLASS_ON  varchar(255) not null,
+	CLASS_OFF varchar(255) not null,
+	LESSON double,
+	REMARKS varchar(1000) not null,
+	OP varchar(255),
+	CREATE_AT datetime,
+	UPDATE_AT datetime
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+2014-05-18修改========================================================
+
+TUITION_BILL 学费单表:
+CREATE TABLE TUITION_BILL(
+	ID  int auto_increment primary key,--ID主键
+	STUDENT_ID int not null,--学生id
+	STUDENT_NAME varchar(50) not null,--学生姓名
+	GRADE varchar(50) not null,--年级
+	START_MONTH  varchar(50) not null,--开始月份
+	END_MONTH    varchar(50) not null,--结束月份
+	BOOK_FEE     double,--书费
+	MATERIAL_FEE double,--材料费
+	TOTAL_FEE 	 double,--总费用
+	TUITION_BILL_STATUS varchar(2) default '0',--学费是否已收，默认为0没有收取，1为未收，2为部分收讫
+	OP varchar(255),--操作人
+	OP_FEE VARCHAR(255),--收费人
+	FEE_TYPE CHAR(1) NOT NULL DEFAULT '0',--学费单收费类型 默认0为现金 1为网付 2为POS
+	REMARKS		varchar(250),--备注
+	CREATE_AT datetime,--创建日期
+	UPDATE_AT datetime --修改日期
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+TUITION_BILL_DETAIL 学费详细单表:
+CREATE TABLE TUITION_BILL_DETAIL(
+	ID  int auto_increment primary key,--id主键
+	TUITION_BILL_ID int not null,--学费单id
+	COURSE_CODE varchar(255) not null,--课程代码
+	CLASS_DATE  varchar(1000) not null,--所有上课日期
+	TUITION_FEE double,--学费
+	OP varchar(255),--操作人
+	CREATE_AT datetime,--创建日期
+	UPDATE_AT datetime --修改日期
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--学生表添加年级字段
+alter table STUDENT add column grade varchar(50) not null;--添加学生年级字段
+--学生签到表添加备注字段
+alter table STUDENT_SIGN_IN add column remarks varchar(500);--添加备注字段
+
+--去掉TUITION_BILL表中字段STATUS varchar(2) default '0',--是否生成学费单，默认为0没有生成，1为已生成
+
+2014-07-01修改========================================================
+--学费单表添加收费人字段
+ALTER TABLE TUITION_BILL ADD COLUMN OP_FEE VARCHAR(255);
+-学费单表添加收费类型字段
+ALTER TABLE TUITION_BILL ADD COLUMN FEE_TYPE CHAR(1) NOT NULL DEFAULT '0';
+========================================================
+
+
+
+
+alter table STUDENT_SIGN_IN add column op varchar(255);--添加操作人字段
+alter table TEACHER_SIGN_IN add column op varchar(255);--添加操作人字段
+
+SELECT COALESCE(COUNT(SSI.ID),0) FROM TEACHER_SIGN_IN TSI 
+LEFT JOIN STUDENT_SIGN_IN SSI ON(SSI.COURSE_CODE=TSI.COURSE_CODE AND SSI.SIGN_DATE=TSI.SIGN_DATE)
+WHERE  SSI.STATUS='1' AND SSI.COURSE_CODE='B001'
+SELECT COALESCE(COUNT(SSI.ID),0) FROM STUDENT_SIGN_IN SSI,TEACHER_SIGN_IN TSI WHERE SSI.COURSE_CODE=TSI.COURSE_CODE AND SSI.SIGN_DATE=TSI.SIGN_DATE AND SSI.STATUS='1'
+	
+	SELECT COALESCE(COUNT(T.ID),0) FROM 
+	((SELECT TSI.COURSE_CODE,TSI.SIGN_DATE FROM TEACHER_SIGN_IN TSI WHERE TSI.COURSE_CODE='B001')
+	UNION
+	(SELECT SSI.COURSE_CODE,SSI.SIGN_DATE FROM STUDENT_SIGN_IN SSI WHERE SSI.STATUS='1' AND SSI.COURSE_CODE='B001')) AS T
+
